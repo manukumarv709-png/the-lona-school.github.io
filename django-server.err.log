@@ -1,0 +1,8 @@
+Watching for file changes with StatReloader
+[10/Jul/2026 22:54:36] "GET /students/ HTTP/1.1" 200 5768
+[10/Jul/2026 22:54:36,910] - Broken pipe from ('127.0.0.1', 63507)
+[10/Jul/2026 22:57:06] "GET /students/ HTTP/1.1" 200 5996
+[10/Jul/2026 22:57:06] "GET /static/music/js/app.js HTTP/1.1" 304 0
+[10/Jul/2026 22:57:07] "GET /static/music/css/app.css HTTP/1.1" 200 14094
+Not Found: /favicon.ico
+[10/Jul/2026 22:57:17] "GET /favicon.ico HTTP/1.1" 404 6185

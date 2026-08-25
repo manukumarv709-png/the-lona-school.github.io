@@ -1,0 +1,10 @@
+{
+  "name": "iona-school-demo",
+  "version": "1.0.0",
+  "description": "Static demo website concept for The Iona School in Nottingham.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "private": true
+}

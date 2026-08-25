@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": "USR-MR5AHR1O-E67C",
+      "name": "harhit",
+      "email": "h2294985@gmail.com",
+      "role": "listener",
+      "passwordHash": "3947c15b1cbfab37a8c5708fc3921a751963895362b0ab3eb3bc74319a9b6a48",
+      "library": [],
+      "createdAt": "2026-07-03T18:51:28.428Z"
+    }
+  ],
+  "uploads": []
+}

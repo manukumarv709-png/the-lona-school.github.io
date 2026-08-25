@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Clone — Bootstrap</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --nav-h: 56px;
+    --sb-w: 240px;
+    --sb-mini-w: 72px;
+    --yt-red: #FF0000;
+    --ink: #0f0f0f;
+    --ink-2nd: #606060;
+    --hover: #f2f2f2;
+    --line: #e5e5e5;
+    --bg: #ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Roboto', Arial, sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    padding-top: var(--nav-h);
+    overflow-x:hidden;
+  }
+  a{ text-decoration:none; color:inherit; }
+  button{ font-family:inherit; }
+  .btn-icon{
+    border:none; background:transparent; width:40px; height:40px;
+    border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    color:var(--ink); font-size:1.2rem; flex-shrink:0;
+  }
+  .btn-icon:hover{ background:var(--hover); }
+
+  /* ===== NAVBAR ===== */
+  .yt-navbar{
+    position:fixed; top:0; left:0; right:0; height:var(--nav-h);
+    background:#fff; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 16px; z-index:1050;
+  }
+  .yt-navbar .left-group{ display:flex; align-items:center; gap:16px; min-width:0; }
+  .yt-logo{ display:flex; align-items:center; gap:4px; font-size:1.35rem; font-weight:700; letter-spacing:-0.5px; white-space:nowrap; }
+  .yt-logo i{ color:var(--yt-red); font-size:1.6rem; }
+  .yt-logo span.mark{ color:var(--ink); }
+
+  .search-form{ flex:1 1 auto; max-width:640px; margin:0 24px; min-width:0; }
+  .search-form .input-group{ height:40px; }
+  .search-form input{
+    border:1px solid #ccc; border-right:none; border-radius:20px 0 0 20px;
+    padding-left:16px; box-shadow:none;
+  }
+  .search-form input:focus{ border-color:#1c62b9; box-shadow:none; }
+  .search-form .search-btn{
+    border:1px solid #ccc; border-left:none; border-radius:0 20px 20px 0;
+    background:#f8f8f8; padding:0 20px; color:var(--ink);
+  }
+  .search-form .search-btn:hover{ background:#f0f0f0; }
+  .mic-btn{
+    width:40px; height:40px; border-radius:50%; background:#f8f8f8;
+    border:1px solid var(--line); flex-shrink:0;
+  }
+  .mic-btn:hover{ background:var(--hover); }
+
+  .right-group{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .create-btn{
+    display:flex; align-items:center; gap:6px; background:var(--hover);
+    border:none; border-radius:20px; padding:8px 14px; font-weight:500; font-size:.9rem;
+  }
+  .create-btn:hover{ background:#e5e5e5; }
+  .avatar-btn img{ width:32px; height:32px; border-radius:50%; display:block; }
+  .notif-wrap{ position:relative; }
+  .notif-dot{
+    position:absolute; top:4px; right:4px; background:var(--yt-red); color:#fff;
+    font-size:.62rem; font-weight:700; border-radius:50%; min-width:16px; height:16px;
+    display:flex; align-items:center; justify-content:center; padding:0 3px; pointer-events:none;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar{
+    position:fixed; top:var(--nav-h); left:0; bottom:0; width:var(--sb-w);
+    overflow-y:auto; background:#fff; padding:12px 0 24px;
+    transition: width .18s ease, transform .22s ease;
+    z-index:1040;
+  }
+  .sidebar::-webkit-scrollbar{ width:8px; }
+  .sidebar::-webkit-scrollbar-thumb{ background:#ccc; border-radius:4px; }
+
+  .sb-section{ padding:4px 12px 12px; border-bottom:1px solid var(--line); }
+  .sb-section:last-child{ border-bottom:none; }
+  .sb-item{
+    display:flex; align-items:center; gap:20px; padding:10px 12px; border-radius:10px;
+    font-size:.9rem; color:var(--ink); cursor:pointer; white-space:nowrap;
+  }
+  .sb-item i{ font-size:1.25rem; width:24px; text-align:center; flex-shrink:0; }
+  .sb-item:hover{ background:var(--hover); }
+  .sb-item.active{ background:var(--hover); font-weight:700; }
+  .sb-item img.ch-avatar{ width:24px; height:24px; border-radius:50%; flex-shrink:0; }
+  .sb-heading{ font-size:.95rem; font-weight:700; padding:8px 12px 4px; display:flex; align-items:center; justify-content:space-between; }
+  .sb-footer-links{ font-size:.8rem; color:var(--ink-2nd); padding:8px 16px; line-height:1.7; }
+
+  /* mini (collapsed on desktop) */
+  .sidebar.mini{ width:var(--sb-mini-w); }
+  .sidebar.mini .sb-section:not(.mini-visible){ display:none; }
+  .sidebar.mini .sb-item{
+    flex-direction:column; gap:4px; padding:14px 4px; border-radius:8px; text-align:center;
+  }
+  .sidebar.mini .sb-item i{ font-size:1.35rem; width:auto; }
+  .sidebar.mini .sb-item span{ font-size:.65rem; }
+  .sidebar.mini .sb-heading, .sidebar.mini .sb-footer-links{ display:none; }
+
+  /* mobile (offcanvas) */
+  .sb-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1035;
+    opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .sb-backdrop.show{ opacity:1; pointer-events:auto; }
+
+  @media (max-width: 991.98px){
+    .sidebar{ transform:translateX(-100%); width:min(280px,80vw); box-shadow:0 0 24px rgba(0,0,0,.15); }
+    .sidebar.show{ transform:translateX(0); }
+    .sidebar.mini{ width:min(280px,80vw); }
+    .sidebar.mini .sb-item{ flex-direction:row; text-align:left; padding:10px 12px; }
+    .sidebar.mini .sb-item i{ font-size:1.25rem; }
+    .sidebar.mini .sb-item span{ font-size:.9rem; }
+    .sidebar.mini .sb-section:not(.mini-visible){ display:block; }
+    .sidebar.mini .sb-heading, .sidebar.mini .sb-footer-links{ display:block; }
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .main-content{
+    margin-left:var(--sb-w);
+    padding:20px 24px 48px;
+    transition: margin-left .18s ease;
+    min-height:calc(100vh - var(--nav-h));
+  }
+  .main-content.mini-margin{ margin-left:var(--sb-mini-w); }
+  @media (max-width: 991.98px){
+    .main-content, .main-content.mini-margin{ margin-left:0; padding:16px 16px 40px; }
+  }
+
+  /* category pills */
+  .pills-row{
+    display:flex; gap:10px; overflow-x:auto; padding-bottom:14px; margin-bottom:8px;
+    scrollbar-width:none;
+  }
+  .pills-row::-webkit-scrollbar{ display:none; }
+  .pill{
+    flex-shrink:0; border:none; background:var(--hover); color:var(--ink);
+    padding:7px 14px; border-radius:8px; font-size:.87rem; font-weight:500; white-space:nowrap;
+  }
+  .pill:hover{ background:#e5e5e5; }
+  .pill.active{ background:var(--ink); color:#fff; }
+
+  /* video grid */
+  .video-item{ display: block; }
+  .video-item.d-none{ display:none !important; }
+  .thumb-wrap{
+    position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
+    background:#eee; margin-bottom:12px;
+  }
+  .thumb-wrap img{
+    width:100%; height:100%; object-fit:cover; display:block; transition:transform .25s ease;
+  }
+  .video-card:hover .thumb-wrap img{ transform:scale(1.04); }
+  .duration-badge{
+    position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,.8); color:#fff;
+    font-size:.72rem; font-weight:600; padding:2px 5px; border-radius:4px;
+  }
+  .video-info{ display:flex; gap:12px; }
+  .video-info img.channel-avatar{ width:36px; height:36px; border-radius:50%; flex-shrink:0; margin-top:2px; }
+  .video-text{ min-width:0; flex:1 1 auto; }
+  .video-title{
+    font-size:.95rem; font-weight:600; line-height:1.35; margin-bottom:4px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .video-meta{ font-size:.82rem; color:var(--ink-2nd); line-height:1.4; }
+  .video-card .three-dot{ align-self:flex-start; opacity:0; }
+  .video-card:hover .three-dot{ opacity:1; }
+
+  #noResults{ display:none; text-align:center; color:var(--ink-2nd); padding:60px 0; }
+  #noResults.show{ display:block; }
+</style>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="yt-navbar">
+  <div class="left-group">
+    <button class="btn-icon" id="hamburgerBtn" aria-label="Toggle menu"><i class="bi bi-list"></i></button>
+    <a href="#" class="yt-logo">
+      <i class="bi bi-youtube"></i><span class="mark">YouTube</span>
+    </a>
+  </div>
+
+  <form class="search-form d-none d-sm-flex" onsubmit="return false;">
+    <div class="input-group">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search">
+      <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
+    </div>
+  </form>
+  <button class="mic-btn d-none d-md-inline-flex" aria-label="Search with your voice"><i class="bi bi-mic"></i></button>
+
+  <div class="right-group">
+    <button class="btn-icon d-sm-none" aria-label="Search"><i class="bi bi-search"></i></button>
+    <button class="create-btn d-none d-md-flex" aria-label="Create">
+      <i class="bi bi-camera-video"></i> Create
+    </button>
+    <button class="btn-icon d-none d-sm-inline-flex" aria-label="YouTube apps"><i class="bi bi-grid-3x3-gap"></i></button>
+    <div class="notif-wrap">
+      <button class="btn-icon" aria-label="Notifications"><i class="bi bi-bell"></i></button>
+      <span class="notif-dot">9+</span>
+    </div>
+    <button class="btn-icon avatar-btn" aria-label="Account">
+      <img src="https://i.pravatar.cc/64?img=12" alt="account avatar">
+    </button>
+  </div>
+</nav>
+
+<!-- ================= SIDEBAR BACKDROP (mobile) ================= -->
+<div class="sb-backdrop" id="sbBackdrop"></div>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sb-section mini-visible">
+    <div class="sb-item active"><i class="bi bi-house-door-fill"></i><span>Home</span></div>
+    <div class="sb-item"><i class="bi bi-play-btn"></i><span>Shorts</span></div>
+    <div class="sb-item"><i class="bi bi-collection-play"></i><span>Subscriptions</span></div>
+  </div>
+
+  <div class="sb-section mini-visible">
+    <div class="sb-item"><i class="bi bi-person-square"></i><span>You</span> <i class="bi bi-chevron-right ms-auto small"></i></div>
+    <div class="sb-item"><i class="bi bi-clock-history"></i><span>History</span></div>
+    <div class="sb-item"><i class="bi bi-collection-play-fill"></i><span>Playlists</span></div>
+    <div class="sb-item"><i class="bi bi-camera-reels"></i><span>Your videos</span></div>
+    <div class="sb-item"><i class="bi bi-clock"></i><span>Watch later</span></div>
+    <div class="sb-item"><i class="bi bi-hand-thumbs-up"></i><span>Liked videos</span></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-heading">Subscriptions</div>
+    <div class="sb-item"><img class="ch-avatar" src="https://i.pravatar.cc/48?img=32"><span>CodeCrafters</span></div>
+    <div class="sb-item"><img class="ch-avatar" src="https://i.pravatar.cc/48?img=45"><span>Deep Space Docs</span></div>
+    <div class="sb-item"><img class="ch-avatar" src="https://i.pravatar.cc/48?img=15"><span>Kitchen Theory</span></div>
+    <div class="sb-item"><img class="ch-avatar" src="https://i.pravatar.cc/48?img=8"><span>Trail & Summit</span></div>
+    <div class="sb-item"><img class="ch-avatar" src="https://i.pravatar.cc/48?img=51"><span>Lo-Fi Lounge</span></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-heading">Explore</div>
+    <div class="sb-item"><i class="bi bi-fire"></i><span>Trending</span></div>
+    <div class="sb-item"><i class="bi bi-bag"></i><span>Shopping</span></div>
+    <div class="sb-item"><i class="bi bi-music-note-beamed"></i><span>Music</span></div>
+    <div class="sb-item"><i class="bi bi-film"></i><span>Movies</span></div>
+    <div class="sb-item"><i class="bi bi-broadcast"></i><span>Live</span></div>
+    <div class="sb-item"><i class="bi bi-controller"></i><span>Gaming</span></div>
+    <div class="sb-item"><i class="bi bi-newspaper"></i><span>News</span></div>
+    <div class="sb-item"><i class="bi bi-trophy"></i><span>Sports</span></div>
+    <div class="sb-item"><i class="bi bi-mortarboard"></i><span>Courses</span></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-heading">More from YouTube</div>
+    <div class="sb-item"><i class="bi bi-play-circle"></i><span>YouTube Premium</span></div>
+    <div class="sb-item"><i class="bi bi-music-note-list"></i><span>YouTube Music</span></div>
+    <div class="sb-item"><i class="bi bi-emoji-smile"></i><span>YouTube Kids</span></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-item"><i class="bi bi-gear"></i><span>Settings</span></div>
+    <div class="sb-item"><i class="bi bi-flag"></i><span>Report history</span></div>
+    <div class="sb-item"><i class="bi bi-question-circle"></i><span>Help</span></div>
+    <div class="sb-item"><i class="bi bi-chat-square-text"></i><span>Send feedback</span></div>
+  </div>
+
+  <div class="sb-footer-links">
+    About Press Copyright Contact&nbsp;us Creators Advertise Developers<br>
+    Terms Privacy Policy&nbsp;&amp;&nbsp;Safety How&nbsp;YouTube&nbsp;works Test&nbsp;new&nbsp;features<br><br>
+    © 2026 Bootstrap Demo
+  </div>
+</aside>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="main-content" id="mainContent">
+
+  <div class="pills-row" id="pillsRow">
+    <button class="pill active" data-cat="All">All</button>
+    <button class="pill" data-cat="Music">Music</button>
+    <button class="pill" data-cat="Gaming">Gaming</button>
+    <button class="pill" data-cat="Live">Live</button>
+    <button class="pill" data-cat="JavaScript">JavaScript</button>
+    <button class="pill" data-cat="News">News</button>
+    <button class="pill" data-cat="Cooking">Cooking</button>
+    <button class="pill" data-cat="Travel">Travel</button>
+    <button class="pill" data-cat="Podcasts">Podcasts</button>
+    <button class="pill" data-cat="Sports">Sports</button>
+    <button class="pill" data-cat="Comedy">Comedy</button>
+    <button class="pill" data-cat="Design">Design</button>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4" id="videoGrid"></div>
+  <div id="noResults">
+    <i class="bi bi-camera-video-off" style="font-size:2rem;"></i>
+    <p class="mt-2 mb-0">No results match your search.</p>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ---------- Sidebar toggle logic ----------
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('mainContent');
+  const backdrop = document.getElementById('sbBackdrop');
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  let isMobile = window.innerWidth < 992;
+
+  function syncMode(){
+    const nowMobile = window.innerWidth < 992;
+    if(nowMobile !== isMobile){
+      isMobile = nowMobile;
+      sidebar.classList.remove('show');
+      backdrop.classList.remove('show');
+      if(!isMobile){ sidebar.classList.remove('mini'); mainContent.classList.remove('mini-margin'); }
+    }
+  }
+  window.addEventListener('resize', syncMode);
+
+  hamburgerBtn.addEventListener('click', () => {
+    if(isMobile){
+      sidebar.classList.toggle('show');
+      backdrop.classList.toggle('show');
+    } else {
+      sidebar.classList.toggle('mini');
+      mainContent.classList.toggle('mini-margin');
+    }
+  });
+  backdrop.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    backdrop.classList.remove('show');
+  });
+  sidebar.querySelectorAll('.sb-item').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      sidebar.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+      item.classList.add('active');
+      if(isMobile){ sidebar.classList.remove('show'); backdrop.classList.remove('show'); }
+    });
+  });
+
+  // ---------- Video data ----------
+  const VIDEOS = [
+    {t:"Building a REST API from scratch in 20 minutes", c:"CodeCrafters", views:"482K", time:"2 days ago", dur:"20:14", cat:"JavaScript", seed:11, av:32},
+    {t:"Lo-fi beats to focus and study to — 3 hour mix", c:"Lo-Fi Lounge", views:"1.9M", time:"1 week ago", dur:"3:01:22", cat:"Music", seed:22, av:51},
+    {t:"Ranked to Diamond in one weekend — full VOD review", c:"Pixel Pursuit", views:"310K", time:"5 hours ago", dur:"34:50", cat:"Gaming", seed:33, av:19},
+    {t:"LIVE: City council budget meeting", c:"Deep Space Docs", views:"4.2K watching", time:"Live now", dur:"LIVE", cat:"Live", seed:44, av:45},
+    {t:"Morning briefing: markets, weather, and top stories", c:"Daily Signal", views:"812K", time:"9 hours ago", dur:"11:03", cat:"News", seed:55, av:6},
+    {t:"One-pan gnocchi you'll make every week", c:"Kitchen Theory", views:"1.1M", time:"3 days ago", dur:"9:47", cat:"Cooking", seed:66, av:15},
+    {t:"48 hours in the Dolomites — hiking the Alta Via 1", c:"Trail & Summit", views:"265K", time:"6 days ago", dur:"18:32", cat:"Travel", seed:77, av:8},
+    {t:"Deep work, distraction, and the myth of multitasking", c:"Mindframe", views:"93K", time:"1 day ago", dur:"46:12", cat:"Podcasts", seed:88, av:60},
+    {t:"Match highlights: the comeback nobody saw coming", c:"Pitchside", views:"2.3M", time:"4 hours ago", dur:"7:58", cat:"Sports", seed:99, av:27},
+    {t:"I tried stand-up for the first time — here's what happened", c:"Set List", views:"540K", time:"2 weeks ago", dur:"14:20", cat:"Comedy", seed:10, av:39},
+    {t:"Grid systems that actually make sense", c:"Studio Notes", views:"128K", time:"3 days ago", dur:"16:05", cat:"Design", seed:21, av:70},
+    {t:"CSS you didn't know you needed in 2026", c:"CodeCrafters", views:"701K", time:"1 week ago", dur:"22:41", cat:"JavaScript", seed:31, av:32},
+    {t:"Piano covers for a rainy afternoon", c:"Lo-Fi Lounge", views:"389K", time:"5 days ago", dur:"58:10", cat:"Music", seed:41, av:51},
+    {t:"Speedrun world record attempt — live commentary", c:"Pixel Pursuit", views:"87K watching", time:"Live now", dur:"LIVE", cat:"Live", seed:51, av:19},
+    {t:"Street food tour: five countries, one weekend", c:"Trail & Summit", views:"954K", time:"2 weeks ago", dur:"25:19", cat:"Travel", seed:61, av:8},
+    {t:"Why every team's standup meeting fails", c:"Mindframe", views:"210K", time:"4 days ago", dur:"12:37", cat:"Podcasts", seed:71, av:60},
+  ];
+
+  const grid = document.getElementById('videoGrid');
+  const noResults = document.getElementById('noResults');
+
+  function cardHTML(v, idx){
+    return `
+    <div class="col video-item" data-cat="${v.cat}" data-title="${v.t.toLowerCase()}" data-channel="${v.c.toLowerCase()}">
+      <div class="video-card">
+        <div class="thumb-wrap">
+          <img loading="lazy" src="https://picsum.photos/seed/ytdemo${v.seed}/400/225" alt="${v.t}">
+          <span class="duration-badge">${v.dur}</span>
+        </div>
+        <div class="video-info">
+          <img class="channel-avatar" src="https://i.pravatar.cc/72?img=${v.av}" alt="${v.c}">
+          <div class="video-text">
+            <div class="video-title">${v.t}</div>
+            <div class="video-meta">${v.c}</div>
+            <div class="video-meta">${v.views} views • ${v.time}</div>
+          </div>
+          <button class="btn-icon three-dot" aria-label="More options"><i class="bi bi-three-dots-vertical"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  grid.innerHTML = VIDEOS.map(cardHTML).join('');
+
+  // ---------- Filtering: category pills + search ----------
+  const pillsRow = document.getElementById('pillsRow');
+  const searchInput = document.getElementById('searchInput');
+  let currentCat = 'All';
+
+  function applyFilters(){
+    const q = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+    document.querySelectorAll('.video-item').forEach(item=>{
+      const matchesCat = currentCat === 'All' || item.dataset.cat === currentCat;
+      const matchesQuery = !q || item.dataset.title.includes(q) || item.dataset.channel.includes(q);
+      const show = matchesCat && matchesQuery;
+      item.classList.toggle('d-none', !show);
+      if(show) visibleCount++;
+    });
+    noResults.classList.toggle('show', visibleCount === 0);
+  }
+
+  pillsRow.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.pill');
+    if(!btn) return;
+    pillsRow.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    applyFilters();
+  });
+
+  searchInput.addEventListener('input', applyFilters);
+</script>
+</body>
+</html>
